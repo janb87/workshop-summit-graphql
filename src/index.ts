@@ -1,48 +1,9 @@
-import { queryType, makeSchema, stringArg, objectType, idArg } from 'nexus'
+import { queryType, makeSchema, stringArg, objectType, idArg, mutationType } from 'nexus'
 import { ApolloServer } from 'apollo-server'
-import { USERS } from './db/users'
-
-const Query = queryType({
-  definition(t) {
-    t.field('hello', {
-      type: 'String',
-      args: {
-        name: stringArg()
-      },
-      resolve: (_, args) => `Hello ${args.name || 'Nexus'}`
-    }),
-    t.field('users', {
-      type: 'User',
-      list: true,
-      nullable: true,
-      resolve: () => {
-        return USERS
-      }
-    }),
-    t.field('user', {
-      type: 'User',
-      nullable: true,
-      args: {
-        id: idArg({ required: true })
-      },
-      resolve: (_, { id }) => {
-        return USERS.find(user => user.id === id)
-      }
-    })
-  }
-})
-
-const User = objectType({
-  name: 'User',
-  definition(t) {
-    t.id('id'),
-    t.string('email'),
-    t.string('name')
-  }
-})
+import { UserSchemas } from './user'
 
 const schema = makeSchema({
-  types: [Query, User],
+  types: [...UserSchemas],
   outputs: {
     schema: __dirname + '/../schema.graphql',
     typegen: __dirname + '/generated/types.ts'
