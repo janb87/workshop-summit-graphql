@@ -1,5 +1,6 @@
 import { queryType, makeSchema, stringArg, objectType } from 'nexus'
 import { ApolloServer } from 'apollo-server'
+import { USERS } from './db/users'
 
 const Query = queryType({
   definition(t) {
@@ -10,8 +11,13 @@ const Query = queryType({
       },
       resolve: (_, args) => `Hello ${args.name || 'Nexus'}`
     }),
-    t.field('User', {
-      type: 'User'
+    t.field('users', {
+      type: 'User',
+      list: true,
+      nullable: true,
+      resolve: () => {
+        return USERS
+      }
     })
   }
 })

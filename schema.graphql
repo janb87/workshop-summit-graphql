@@ -4,7 +4,7 @@
 
 type Query {
   hello(name: String): String!
-  User: User!
+  users: [User!]
 }
 
 type User {
