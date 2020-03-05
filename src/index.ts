@@ -5,8 +5,9 @@ import { PrismaClient } from '@prisma/client'
 import { initTestData } from './initTestData'
 import postSchemas from './post'
 import userSchemas from './user'
+import categorySchemas from './category'
 
-export interface Context { 
+export interface Context {
   prisma: PrismaClient
 }
 
@@ -20,6 +21,7 @@ const Query =
     definition(t) {
       userSchemas.query(t)
       postSchemas.query(t)
+      categorySchemas.query(t)
     }
   })
 
@@ -28,11 +30,12 @@ const Mutation =
     definition(t) {
       userSchemas.mutation(t)
       postSchemas.mutation(t)
+      categorySchemas.mutation(t)
     }
   })
 
 const schema = makeSchema({
-  types: [Query, Mutation, ...userSchemas.schemas, ...postSchemas.schemas],
+  types: [Query, Mutation, ...userSchemas.schemas, ...postSchemas.schemas, ...categorySchemas.schemas],
   plugins: [nexusPrismaPlugin()],
   outputs: {
     schema: __dirname + '/../schema.graphql',

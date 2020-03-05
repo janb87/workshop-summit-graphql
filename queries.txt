@@ -1,5 +1,6 @@
 {
   hello(name: "Jan")
+  
   users {
     id
     name
@@ -25,6 +26,12 @@
     author {
       name
       email
+    }
+    categories {
+      name
+    	owner {
+        name
+      }
     }
   }
 }
@@ -64,12 +71,22 @@ mutation {
 }
 
 mutation {
-  createDraft(title: "Hello world!", content: "Lorem ipsum", authorEmail: "alice@prisma.io") {
+  createDraft(
+    title: "Hello world!"
+    content: "Lorem ipsum"
+    authorEmail: "alice@prisma.io"
+    categoryIds: [1,2]
+  ) {
     id
     title
     content
+    categories {
+      id
+      name
+    }
   }
 }
+
 
 mutation {
   publish(postId: 1) {
@@ -90,3 +107,20 @@ mutation {
     title
   }
 }
+
+mutation {
+  createCategory(data: {
+    name: "News",
+    owner: {
+      connect: {
+        id: 1
+      }
+    }
+  }) {
+    name
+    owner {
+      email
+    }
+  }
+}
+

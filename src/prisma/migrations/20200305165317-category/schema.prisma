@@ -1,7 +1,7 @@
 // Data source: SQLite
 datasource sqlite {
     provider = "sqlite"
-    url      = "file:./dev.db"
+    url = "***"
 }
 
 // Generated assets: Prisma Client
@@ -27,7 +27,7 @@ model Post {
     content    String
     published  Boolean
     authorId   User
-    categories Category[]
+    categories Post[]
 }
 
 model Category {

@@ -10,6 +10,7 @@ const Post = objectType({
         t.model.content()
         t.model.published()
         t.model.authorId({ alias: 'author' })
+        t.model.categories()
     }
 })
 
@@ -68,7 +69,7 @@ function queryConfig(t: ObjectDefinitionBlock<"Query">) {
 }
 
 function mutationConfig(t: ObjectDefinitionBlock<"Mutation">) {
-    t.crud.deleteOnePost({ alias: 'deletePost'})
+    t.crud.deleteOnePost({ alias: 'deletePost' })
     t.field('createDraft', {
         type: 'Post',
         nullable: false,
@@ -76,14 +77,18 @@ function mutationConfig(t: ObjectDefinitionBlock<"Mutation">) {
             authorEmail: stringArg({ required: true }),
             content: stringArg({ required: true }),
             title: stringArg({ required: true }),
+            categoryIds: intArg({ required: true, list: true }),
         },
-        resolve: async (_, { authorEmail, content, title }, { prisma }: Context) => {
+        resolve: async (_, { authorEmail, content, title, categoryIds }, { prisma }: Context) => {
             return prisma.post.create({
                 data: {
                     authorId: { connect: { email: authorEmail } },
                     content: content,
                     title: title,
-                    published: false
+                    published: false,
+                    categories: {
+                        connect: categoryIds.map(cat => ({ id: cat }))
+                    },
                 }
             })
         }

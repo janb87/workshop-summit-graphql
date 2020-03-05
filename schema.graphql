@@ -7,6 +7,63 @@ input BooleanFilter {
   not: Boolean
 }
 
+type Category {
+  id: Int!
+  name: String!
+  owner: User!
+}
+
+input CategoryCreateInput {
+  name: String!
+  owner: UserCreateOneWithoutCategoriesInput!
+  post: PostCreateOneWithoutCategoriesInput
+}
+
+input CategoryCreateManyWithoutOwnerInput {
+  connect: [CategoryWhereUniqueInput!]
+  create: [CategoryCreateWithoutOwnerInput!]
+}
+
+input CategoryCreateManyWithoutPostInput {
+  connect: [CategoryWhereUniqueInput!]
+  create: [CategoryCreateWithoutPostInput!]
+}
+
+input CategoryCreateWithoutOwnerInput {
+  name: String!
+  post: PostCreateOneWithoutCategoriesInput
+}
+
+input CategoryCreateWithoutPostInput {
+  name: String!
+  owner: UserCreateOneWithoutCategoriesInput!
+}
+
+input CategoryFilter {
+  every: CategoryWhereInput
+  none: CategoryWhereInput
+  some: CategoryWhereInput
+}
+
+input CategoryOrderByInput {
+  id: OrderByArg
+  name: OrderByArg
+}
+
+input CategoryWhereInput {
+  AND: [CategoryWhereInput!]
+  id: IntFilter
+  name: StringFilter
+  NOT: [CategoryWhereInput!]
+  OR: [CategoryWhereInput!]
+  owner: UserWhereInput
+  post: PostWhereInput
+}
+
+input CategoryWhereUniqueInput {
+  id: Int
+}
+
 input IntFilter {
   equals: Int
   gt: Int
@@ -19,7 +76,8 @@ input IntFilter {
 }
 
 type Mutation {
-  createDraft(authorEmail: String!, content: String!, title: String!): Post!
+  createCategory(data: CategoryCreateInput!): Category!
+  createDraft(authorEmail: String!, categoryIds: [Int!]!, content: String!, title: String!): Post!
   deletePost(where: PostWhereUniqueInput!): Post
   deleteUser(where: UserWhereUniqueInput!): User
   publish(postId: Int!): Post!
@@ -53,8 +111,33 @@ enum OrderByArg {
 
 type Post {
   author: User!
+  categories(after: CategoryWhereUniqueInput, before: CategoryWhereUniqueInput, first: Int, last: Int, skip: Int): [Category!]!
   content: String!
   id: Int!
+  published: Boolean!
+  title: String!
+}
+
+input PostCreateManyWithoutAuthorIdInput {
+  connect: [PostWhereUniqueInput!]
+  create: [PostCreateWithoutAuthorIdInput!]
+}
+
+input PostCreateOneWithoutCategoriesInput {
+  connect: PostWhereUniqueInput
+  create: PostCreateWithoutCategoriesInput
+}
+
+input PostCreateWithoutAuthorIdInput {
+  categories: CategoryCreateManyWithoutPostInput
+  content: String!
+  published: Boolean!
+  title: String!
+}
+
+input PostCreateWithoutCategoriesInput {
+  authorId: UserCreateOneWithoutPostsInput!
+  content: String!
   published: Boolean!
   title: String!
 }
@@ -75,6 +158,7 @@ input PostOrderByInput {
 input PostWhereInput {
   AND: [PostWhereInput!]
   authorId: UserWhereInput
+  categories: CategoryFilter
   content: StringFilter
   id: IntFilter
   NOT: [PostWhereInput!]
@@ -88,6 +172,8 @@ input PostWhereUniqueInput {
 }
 
 type Query {
+  categories(after: CategoryWhereUniqueInput, before: CategoryWhereUniqueInput, first: Int, last: Int, orderBy: CategoryOrderByInput, skip: Int, where: CategoryWhereInput): [Category!]!
+  category(where: CategoryWhereUniqueInput!): Category
   filterPosts(authorEmail: String, published: Boolean, searchString: String): [Post!]!
   hello(name: String): String!
   post(id: Int!): Post
@@ -118,6 +204,30 @@ type User {
   role: UserRole
 }
 
+input UserCreateOneWithoutCategoriesInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateWithoutCategoriesInput
+}
+
+input UserCreateOneWithoutPostsInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateWithoutPostsInput
+}
+
+input UserCreateWithoutCategoriesInput {
+  email: String!
+  name: String
+  posts: PostCreateManyWithoutAuthorIdInput
+  role: UserRole
+}
+
+input UserCreateWithoutPostsInput {
+  categories: CategoryCreateManyWithoutOwnerInput
+  email: String!
+  name: String
+  role: UserRole
+}
+
 enum UserRole {
   Admin
   Visitor
@@ -125,6 +235,7 @@ enum UserRole {
 
 input UserWhereInput {
   AND: [UserWhereInput!]
+  categories: CategoryFilter
   email: StringFilter
   id: IntFilter
   name: NullableStringFilter
