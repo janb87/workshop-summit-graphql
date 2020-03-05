@@ -1,13 +1,32 @@
-import { makeSchema } from 'nexus'
+import { makeSchema, queryType, mutationType } from 'nexus'
 import { ApolloServer } from 'apollo-server'
 import { getUserSchemas } from './user'
 import { PrismaClient } from '@prisma/client'
 import { initTestData } from './initTestData'
+import { getPostSchemas } from './post'
 
 const prisma = new PrismaClient()
 
+const userSchemas = getUserSchemas(prisma)
+const postSchemas = getPostSchemas(prisma)
+const Query =
+  queryType({
+    definition(t) {
+      userSchemas.query(t)
+      postSchemas.query(t)
+    }
+  })
+
+const Mutation =
+  mutationType({
+    definition(t) {
+      userSchemas.mutation(t)
+      postSchemas.mutation(t)
+    }
+  })
+
 const schema = makeSchema({
-  types: [...getUserSchemas(prisma)],
+  types: [Query, Mutation, ...userSchemas.schemas, ...postSchemas.schemas],
   outputs: {
     schema: __dirname + '/../schema.graphql',
     typegen: __dirname + '/generated/types.ts'

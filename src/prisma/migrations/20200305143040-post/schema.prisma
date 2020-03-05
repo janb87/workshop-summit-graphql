@@ -1,7 +1,7 @@
 // Data source: SQLite
 datasource sqlite {
     provider = "sqlite"
-    url      = "file:./dev.db"
+    url = "***"
 }
 
 // Generated assets: Prisma Client
@@ -10,21 +10,22 @@ generator client {
 }
 
 enum UserRole {
-    admin visitor
+  admin
+  visitor
 }
 
 // Data model definition (mapped to database schema)
 model User {
-    id    Int       @id @default(autoincrement())
+    id    Int     @id @default(autoincrement())
     name  String?
-    email String    @unique
+    email String  @unique
     role  UserRole?
 }
 
 model Post {
-    id        Int     @id @default(autoincrement())
-    title     String
-    content   String
+    id    Int     @id @default(autoincrement())
+    title String
+    content String
     published Boolean
-    authorId  User
+    authorId User
 }

@@ -3,6 +3,8 @@
 
 
 type Mutation {
+  createDraft(authorEmail: String!, content: String!, title: String!): Post!
+  publish(postId: Int!): Post!
   signupUser(data: NewUser): User!
 }
 
@@ -12,8 +14,18 @@ input NewUser {
   role: UserRole!
 }
 
+type Post {
+  author: User!
+  content: String!
+  id: Int!
+  published: Boolean!
+  title: String!
+}
+
 type Query {
   hello(name: String): String!
+  post(id: Int!): Post
+  posts(authorEmail: String, published: Boolean, searchString: String): [Post!]!
   user(id: Int!): User
   users: [User!]
 }
