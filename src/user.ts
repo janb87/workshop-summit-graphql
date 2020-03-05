@@ -47,6 +47,17 @@ export function getUserSchemas(prismaClient: PrismaClient) {
                 type: 'UserRole',
                 nullable: true
             })
+            t.field('posts', {
+                type: 'Post',
+                list: true,
+                resolve: parent => {
+                    return prismaClient.post.findMany({
+                        where: { authorId: {
+                            id: parent.id
+                        } }
+                    })
+                }
+            })
         }
     })
 
