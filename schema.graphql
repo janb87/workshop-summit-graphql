@@ -4,11 +4,12 @@
 
 type Query {
   hello(name: String): String!
+  user(id: ID!): User
   users: [User!]
 }
 
 type User {
-  email: String
+  email: String!
   id: ID!
-  name: String
+  name: String!
 }

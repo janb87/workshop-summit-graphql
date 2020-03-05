@@ -1,4 +1,4 @@
-import { queryType, makeSchema, stringArg, objectType } from 'nexus'
+import { queryType, makeSchema, stringArg, objectType, idArg } from 'nexus'
 import { ApolloServer } from 'apollo-server'
 import { USERS } from './db/users'
 
@@ -18,6 +18,16 @@ const Query = queryType({
       resolve: () => {
         return USERS
       }
+    }),
+    t.field('user', {
+      type: 'User',
+      nullable: true,
+      args: {
+        id: idArg({ required: true })
+      },
+      resolve: (_, { id }) => {
+        return USERS.find(user => user.id === id)
+      }
     })
   }
 })
@@ -26,12 +36,8 @@ const User = objectType({
   name: 'User',
   definition(t) {
     t.id('id'),
-    t.string('email', {
-      nullable: true
-    }),
-    t.string('name', {
-      nullable: true
-    })
+    t.string('email'),
+    t.string('name')
   }
 })
 
