@@ -1,0 +1,23 @@
+// Data source: SQLite
+datasource sqlite {
+    provider = "sqlite"
+    url = "***"
+}
+
+// Generated assets: Prisma Client
+generator client {
+    provider = "prisma-client-js"
+}
+
+enum UserRole {
+  admin
+  visitor
+}
+
+// Data model definition (mapped to database schema)
+model User {
+    id    Int     @id @default(autoincrement())
+    name  String?
+    email String  @unique
+    role  UserRole?
+}

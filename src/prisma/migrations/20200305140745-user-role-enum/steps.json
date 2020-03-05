@@ -1,0 +1,19 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "UserRole",
+      "values": [
+        "admin",
+        "visitor"
+      ]
+    },
+    {
+      "tag": "UpdateField",
+      "model": "User",
+      "field": "role",
+      "type": "UserRole"
+    }
+  ]
+}

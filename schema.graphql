@@ -13,13 +13,13 @@ input NewUser {
 
 type Query {
   hello(name: String): String!
-  user(id: ID!): User
+  user(id: Int!): User
   users: [User!]
 }
 
 type User {
   email: String!
-  id: ID!
+  id: Int!
   name: String!
   role: UserRole
 }
