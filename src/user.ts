@@ -52,9 +52,11 @@ export function getUserSchemas(prismaClient: PrismaClient) {
                 list: true,
                 resolve: parent => {
                     return prismaClient.post.findMany({
-                        where: { authorId: {
-                            id: parent.id
-                        } }
+                        where: {
+                            authorId: {
+                                id: parent.id
+                            }
+                        }
                     })
                 }
             })
