@@ -2,8 +2,26 @@
 ### Do not make changes to this file directly
 
 
+input BooleanFilter {
+  equals: Boolean
+  not: Boolean
+}
+
+input IntFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: Int
+  notIn: [Int!]
+}
+
 type Mutation {
   createDraft(authorEmail: String!, content: String!, title: String!): Post!
+  deletePost(where: PostWhereUniqueInput!): Post
+  deleteUser(where: UserWhereUniqueInput!): User
   publish(postId: Int!): Post!
   signupUser(data: NewUser): User!
 }
@@ -14,6 +32,25 @@ input NewUser {
   role: UserRole!
 }
 
+input NullableStringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: String
+  notIn: [String!]
+  startsWith: String
+}
+
+enum OrderByArg {
+  asc
+  desc
+}
+
 type Post {
   author: User!
   content: String!
@@ -22,23 +59,82 @@ type Post {
   title: String!
 }
 
+input PostFilter {
+  every: PostWhereInput
+  none: PostWhereInput
+  some: PostWhereInput
+}
+
+input PostOrderByInput {
+  content: OrderByArg
+  id: OrderByArg
+  published: OrderByArg
+  title: OrderByArg
+}
+
+input PostWhereInput {
+  AND: [PostWhereInput!]
+  authorId: UserWhereInput
+  content: StringFilter
+  id: IntFilter
+  NOT: [PostWhereInput!]
+  OR: [PostWhereInput!]
+  published: BooleanFilter
+  title: StringFilter
+}
+
+input PostWhereUniqueInput {
+  id: Int
+}
+
 type Query {
+  filterPosts(authorEmail: String, published: Boolean, searchString: String): [Post!]!
   hello(name: String): String!
   post(id: Int!): Post
-  posts(authorEmail: String, published: Boolean, searchString: String): [Post!]!
+  posts(after: PostWhereUniqueInput, before: PostWhereUniqueInput, first: Int, last: Int, orderBy: PostOrderByInput, skip: Int, where: PostWhereInput): [Post!]!
   user(id: Int!): User
-  users: [User!]
+  users(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, skip: Int): [User!]!
+}
+
+input StringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: String
+  notIn: [String!]
+  startsWith: String
 }
 
 type User {
   email: String!
   id: Int!
-  name: String!
-  posts: [Post!]!
+  name: String
+  posts(after: PostWhereUniqueInput, before: PostWhereUniqueInput, first: Int, last: Int, skip: Int): [Post!]!
   role: UserRole
 }
 
 enum UserRole {
   Admin
   Visitor
+}
+
+input UserWhereInput {
+  AND: [UserWhereInput!]
+  email: StringFilter
+  id: IntFilter
+  name: NullableStringFilter
+  NOT: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  posts: PostFilter
+  role: UserRole
+}
+
+input UserWhereUniqueInput {
+  email: String
+  id: Int
 }

@@ -1,14 +1,20 @@
 import { makeSchema, queryType, mutationType } from 'nexus'
 import { ApolloServer } from 'apollo-server'
-import { getUserSchemas } from './user'
+import { nexusPrismaPlugin } from 'nexus-prisma'
 import { PrismaClient } from '@prisma/client'
 import { initTestData } from './initTestData'
-import { getPostSchemas } from './post'
+import postSchemas from './post'
+import userSchemas from './user'
+
+export interface Context { 
+  prisma: PrismaClient
+}
 
 const prisma = new PrismaClient()
+const resolveContext: Context = {
+  prisma,
+}
 
-const userSchemas = getUserSchemas(prisma)
-const postSchemas = getPostSchemas(prisma)
 const Query =
   queryType({
     definition(t) {
@@ -27,16 +33,24 @@ const Mutation =
 
 const schema = makeSchema({
   types: [Query, Mutation, ...userSchemas.schemas, ...postSchemas.schemas],
+  plugins: [nexusPrismaPlugin()],
   outputs: {
     schema: __dirname + '/../schema.graphql',
     typegen: __dirname + '/generated/types.ts'
+  },
+  typegenAutoConfig: {
+    sources: [{
+      alias: 'prisma',
+      source: '@prisma/client'
+    }]
   }
 })
 
 async function bootstrap() {
   await initTestData(prisma)
   const server = new ApolloServer({
-    schema
+    schema,
+    context: resolveContext
   })
   server.listen().then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`)

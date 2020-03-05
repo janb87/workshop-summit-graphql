@@ -1,0 +1,92 @@
+{
+  hello(name: "Jan")
+  users {
+    id
+    name
+    email
+    role
+    posts {
+      title
+    }
+  }
+  user(id: 3) {
+    id
+    name
+    email
+    role
+    posts {
+      title
+    }
+  }
+  posts {
+    id
+    title
+    published
+    author {
+      name
+      email
+    }
+  }
+}
+
+{
+  filterPosts(authorEmail: "alice@prisma.io", published: true) {
+    id
+    title
+    content
+    published
+  }
+  posts(where: { published: { equals : true }, AND: {
+    authorId: {
+      email: {
+        contains: "alice@prisma.io"
+      }
+    }
+  } }) {
+    id
+    title
+    content
+    published
+  }
+}
+
+mutation {
+  signupUser(data: {
+    name: "Jan",
+    email: "visitor@mail.com",
+    role: Visitor
+  }) {
+    id
+    name
+    email
+    role
+  }
+}
+
+mutation {
+  createDraft(title: "Hello world!", content: "Lorem ipsum", authorEmail: "alice@prisma.io") {
+    id
+    title
+    content
+  }
+}
+
+mutation {
+  publish(postId: 1) {
+    id
+    title
+    content
+    published
+    author {
+      email
+    }
+  }
+}
+
+mutation {
+  deletePost(where: { id: 5 }) {
+    id
+    content
+    title
+  }
+}
