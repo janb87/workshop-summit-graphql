@@ -56,6 +56,10 @@ export function getUserSchemas(prismaClient: PrismaClient) {
         definition(t) {
             t.string('email', { required: true }),
             t.string('name', { required: true })
+            t.field('role', {
+                type: 'UserRole',
+                required: true
+            })
         }
     })
 
@@ -67,13 +71,7 @@ export function getUserSchemas(prismaClient: PrismaClient) {
                 args: {
                     data: arg({ type: 'NewUser' })
                 },
-                resolve: (_, { data }) => {
-                    const newUser = {
-                        ...data,
-                        role: UserRoles.Visitor
-                    }
-                    return prismaClient.user.create({ data: newUser })
-                }
+                resolve: (_, { data }) => prismaClient.user.create({ data })
             })
         }
     })

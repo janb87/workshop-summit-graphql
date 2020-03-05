@@ -32,6 +32,16 @@ Navigate to [http://localhost:4000](http://localhost:4000) in your browser to ex
 
 The schema that specifies the API operations of your GraphQL server is defined in [`./schema.graphql`](./schema.graphql). 
 
+### 3. Generate the Prisma Client (Optional)
+
+Whenever the database schema has changed run following commands:
+
+```
+npx prisma2 migrate save --experimental
+npx prisma2 migrate up --experimental
+npx prisma2 generate
+```
+
 ## Tasks
 
 There are 12 tasks to work on based on this starter kit. You can find all tasks [here](https://www.notion.so/prismaio/GraphQL-Workshop-1206e94e9434408fb1c2c0af080500d6).
