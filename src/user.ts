@@ -1,5 +1,5 @@
-import { queryType, stringArg, idArg, objectType, mutationType, inputObjectType, arg } from 'nexus'
-import { USERS } from './db/users'
+import { queryType, stringArg, idArg, objectType, mutationType, inputObjectType, arg, enumType } from 'nexus'
+import { USERS, UserRoles } from './db/users'
 
 const Query = queryType({
     definition(t) {
@@ -31,12 +31,23 @@ const Query = queryType({
     }
 })
 
+
+
+const UserRole = enumType({
+    name: 'UserRole',
+    members: UserRoles
+})
+
 const User = objectType({
     name: 'User',
     definition(t) {
         t.id('id'),
         t.string('email'),
-        t.string('name')
+        t.string('name'),
+        t.field('role', {
+            type: 'UserRole',
+            nullable: true
+        })
     }
 })
 
@@ -59,6 +70,7 @@ const Mutation = mutationType({
             resolve: (_, { data }) => {
                 const newUser = {
                     ...data,
+                    role: UserRoles.Visitor,
                     id: (USERS.length + 1).toString()
                 }
                 USERS.push(newUser)
@@ -68,4 +80,4 @@ const Mutation = mutationType({
     }
 })
 
-export const UserSchemas = [User, NewUser, Query, Mutation]
+export const UserSchemas = [User, NewUser, UserRole, Query, Mutation]
